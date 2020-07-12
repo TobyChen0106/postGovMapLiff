@@ -1,0 +1,58 @@
+{
+  "name": "info2",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.9.13",
+    "@material-ui/icons": "^4.9.1",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "html-react-parser": "^0.13.0",
+    "js-sha256": "^0.9.0",
+    "leaflet": "^1.6.0",
+    "leaflet-geometryutil": "^0.9.3",
+    "material-ui-icons": "^1.0.0-beta.36",
+    "mongoose": "^5.9.13",
+    "react": "^16.13.1",
+    "react-cookie": "^4.0.3",
+    "react-device-detect": "^1.13.1",
+    "react-dom": "^16.13.1",
+    "react-leaflet": "^2.7.0",
+    "react-loading": "^2.0.3",
+    "react-markdown": "^4.3.1",
+    "react-multi-carousel": "^2.5.5",
+    "react-notifications": "^1.6.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.1",
+    "react-share": "^4.2.0",
+    "react-time-ago": "^6.0.0",
+    "recharts": "^1.8.5",
+    "semantic-ui-react": "^0.88.2",
+    "short-uuid": "^3.1.1"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "startlocal": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:3000",
+  "devDependencies": {}
+}
