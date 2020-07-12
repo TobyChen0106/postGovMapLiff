@@ -31,6 +31,12 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 // Liff
 const liff = window.liff;
 
+const pad = (n, width, z) => {
+    z = z || '0';
+    n = n + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
+
 const useStyles = (theme) => ({
     root: {
 
@@ -89,7 +95,7 @@ const useStyles = (theme) => ({
     markers: {
         zIndex: "1000",
     },
-    mainInfoTypographyHolder:{
+    mainInfoTypographyHolder: {
         display: "flex",
         justifyContent: "space-between",
         marginBottom: "1rem"
@@ -434,7 +440,7 @@ class PostMap extends Component {
     render() {
         const { classes } = this.props;
 
-        const markers = this.state.markers.filter((m, i) => i < 50).map((i, id) => {
+        const markers = this.state.markers.filter((m, i) => i < 40).map((i, id) => {
             const makerIcon = PostOfficeMaker(this.state.postData[i.index].total, this.state.postData[i.index].number_plate_now, this.state.postData[i.index].number_plate_total,
                 i.index === this.state.focusedMark ? "#AA3939" : undefined);
             const popup = (i.index === this.state.focusedMark) ? (
@@ -493,7 +499,7 @@ class PostMap extends Component {
                                 <Typography style={{ fontSize: "0.8rem" }} className={classes.mainInfoTypography}>
                                     {this.state.postData[i.index].number_plate_now === -1 ? `` :
                                         `(${this.state.postData[i.index].s_waitingUpdateTime.getMonth() + 1}/${this.state.postData[i.index].s_waitingUpdateTime.getDate()} 
-                                    ${this.state.postData[i.index].s_waitingUpdateTime.getHours()}:${this.state.postData[i.index].s_waitingUpdateTime.getMinutes()} 更新)`
+                                    ${pad(this.state.postData[i.index].s_waitingUpdateTime.getHours(), 2)}:${pad(this.state.postData[i.index].s_waitingUpdateTime.getMinutes(), 2)} 更新)`
                                     }
                                 </Typography>
                             </div>
@@ -503,7 +509,7 @@ class PostMap extends Component {
                                 <Typography style={{ fontSize: "0.8rem" }} className={classes.mainInfoTypography}>
                                     {this.state.postData[i.index].number_plate_total === -1 ? `` :
                                         `(${this.state.postData[i.index].p_waitingUpdateTime.getMonth() + 1}/${this.state.postData[i.index].p_waitingUpdateTime.getDate()} 
-                                    ${this.state.postData[i.index].p_waitingUpdateTime.getHours()}:${this.state.postData[i.index].p_waitingUpdateTime.getMinutes()} 更新)`
+                                    ${pad(this.state.postData[i.index].p_waitingUpdateTime.getHours(), 0)}:${pad(this.state.postData[i.index].p_waitingUpdateTime.getMinutes(), 2)} 更新)`
                                     }
                                 </Typography>
                             </div>
