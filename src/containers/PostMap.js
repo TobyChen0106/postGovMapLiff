@@ -277,7 +277,7 @@ class PostMap extends Component {
                     this.setState({ postData: prePostData })
                 }
             });
-        }, 500);
+        }, 2000);
     }
 
     createNotification = (type, title, message) => {
