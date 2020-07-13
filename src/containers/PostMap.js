@@ -27,6 +27,7 @@ import p from "../assets/people.svg"
 import postOffcieImage from "../assets/post-office-icon.png";
 import 'react-notifications/lib/notifications.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
+import Modal from '@material-ui/core/Modal';
 
 // Liff
 const liff = window.liff;
@@ -157,7 +158,8 @@ class PostMap extends Component {
             geoErrorCode: 0,
             userData: undefined,
             redirect: false,
-            postData: []
+            postData: [],
+            modalOpen: false
         }
         this.carouselRef = React.createRef();
         this.mapRef = React.createRef();
@@ -195,8 +197,8 @@ class PostMap extends Component {
             const cardboPosition = this.state.userLocation;
             var allMarkers = postData.map((v, id) => ({ position: new LatLng(v.latitude, v.longitude), id: id })).sort(
                 function compareDistnace(a, b) {
-                    return (Math.pow(cardboPosition.lat - a.position.lat, 2) + Math.pow(cardboPosition.lng - a.position.lng, 2))
-                        - (Math.pow(cardboPosition.lat - b.position.lat, 2) + Math.pow(cardboPosition.lng - b.position.lng, 2));
+                    return (Math.abs(cardboPosition.lat - a.position.lat) + Math.abs(cardboPosition.lng - a.position.lng))
+                        - (Math.abs(cardboPosition.lat - b.position.lat) + Math.abs(cardboPosition.lng - b.position.lng));
                 }
             );
             this.setState(
@@ -313,8 +315,8 @@ class PostMap extends Component {
 
                 var allMarkers = postData.map((v, id) => ({ position: new LatLng(v.latitude, v.longitude), id: id })).sort(
                     function compareDistnace(a, b) {
-                        return (Math.pow(success.coords.latitude - a.position.lat, 2) + Math.pow(success.coords.longitude - a.position.lng, 2))
-                            - (Math.pow(success.coords.latitude - b.position.lat, 2) + Math.pow(success.coords.longitude - b.position.lng, 2));
+                        return (Math.abs(success.coords.latitude - a.position.lat) + Math.abs(success.coords.longitude - a.position.lng))
+                            - (Math.abs(success.coords.latitude - b.position.lat) + Math.abs(success.coords.longitude - b.position.lng));
                     }
                 );
                 this.setState(
@@ -329,8 +331,8 @@ class PostMap extends Component {
                 const cardboPosition = this.state.userLocation;
                 var allMarkers = postData.map((v, id) => ({ position: new LatLng(v.latitude, v.longitude), id: id })).sort(
                     function compareDistnace(a, b) {
-                        return (Math.pow(cardboPosition.lat - a.position.lat, 2) + Math.pow(cardboPosition.lng - a.position.lng, 2))
-                            - (Math.pow(cardboPosition.lat - b.position.lat, 2) + Math.pow(cardboPosition.lng - b.position.lng, 2));
+                        return (Math.abs(cardboPosition.lat - a.position.lat) + Math.abs(cardboPosition.lng - a.position.lng))
+                            - (Math.abs(cardboPosition.lat - b.position.lat) + Math.abs(cardboPosition.lng - b.position.lng));
                     }
                 );
 
@@ -398,10 +400,10 @@ class PostMap extends Component {
             this.setState({
                 markers: markers.sort(
                     function compareDistnace(a, b) {
-                        return (Math.pow(newCenter.lat - a.position.lat, 2) + Math.pow(newCenter.lng - a.position.lng, 2))
-                            - (Math.pow(newCenter.lat - b.position.lat, 2) + Math.pow(newCenter.lng - b.position.lng, 2));
+                        return (Math.abs(newCenter.lat - a.position.lat) + Math.abs(newCenter.lng - a.position.lng))
+                            - (Math.abs(newCenter.lat - b.position.lat) + Math.abs(newCenter.lng - b.position.lng));
                     }
-                )
+                ).filter((m, i) => i < 30)
             })
         }, 300);
     }
@@ -414,20 +416,24 @@ class PostMap extends Component {
     }
 
     handleMarkerClick = (id) => {
-        this.setState({ focusedMark: id });
-        const newfocusedMark = this.state.markers.find(m => m.index === id)
-        if (newfocusedMark) {
-            const newCenter = newfocusedMark.position;
-            this.setState(pre => {
-                return ({
-                    markers: pre.markers.sort(
-                        function compareDistnace(a, b) {
-                            return (Math.pow(newCenter.lat - a.position.lat, 2) + Math.pow(newCenter.lng - a.position.lng, 2))
-                                - (Math.pow(newCenter.lat - b.position.lat, 2) + Math.pow(newCenter.lng - b.position.lng, 2));
-                        }
-                    )
-                })
-            });
+        if (id === this.state.focusedMark) {
+
+        } else {
+            this.setState({ focusedMark: id });
+            const newfocusedMark = this.state.markers.find(m => m.index === id)
+            if (newfocusedMark) {
+                const newCenter = newfocusedMark.position;
+                this.setState(pre => {
+                    return ({
+                        markers: pre.markers.sort(
+                            function compareDistnace(a, b) {
+                                return (Math.abs(newCenter.lat - a.position.lat) + Math.abs(newCenter.lng - a.position.lng))
+                                    - (Math.abs(newCenter.lat - b.position.lat) + Math.abs(newCenter.lng - b.position.lng));
+                            }
+                        )
+                    })
+                });
+            }
         }
     }
 
@@ -440,7 +446,7 @@ class PostMap extends Component {
     render() {
         const { classes } = this.props;
 
-        const markers = this.state.markers.filter((m, i) => i < 40).map((i, id) => {
+        const markers = this.state.markers.map((i, id) => {
             const makerIcon = PostOfficeMaker(this.state.postData[i.index].total, this.state.postData[i.index].number_plate_now, this.state.postData[i.index].number_plate_total,
                 i.index === this.state.focusedMark ? "#AA3939" : undefined);
             const popup = (i.index === this.state.focusedMark) ? (
