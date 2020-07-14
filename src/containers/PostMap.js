@@ -121,12 +121,13 @@ const useStyles = (theme) => ({
     },
     modalTextFieldHolder: {
         width: "90vw",
-        height: "auto",
+        maxHeight: "90vh",
         backgroundColor: "#fff",
         position: "absolute",
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
+        overflow: "scroll",
     },
     Setting: {
         textAlign: "center",
