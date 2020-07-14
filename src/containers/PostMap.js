@@ -47,7 +47,7 @@ const useStyles = (theme) => ({
         width: "100vw",
         height: "100vh",
         backgroundColor: "#0058a3",
-        display: "flex",
+        display: "flex col",
         alignItems: "center",
         justifyContent: "center",
     },
@@ -145,6 +145,10 @@ const useStyles = (theme) => ({
         fontSize: "14vw",
         overflow: "scroll",
     },
+    warningInfo:{
+        padding: "10vw",
+        color: "#fff"
+    }
 });
 
 
@@ -185,7 +189,7 @@ class PostMap extends Component {
             userData: undefined,
             redirect: false,
             postData: [],
-            modalOpen: false
+            modalOpen: false,
         }
         this.carouselRef = React.createRef();
         this.mapRef = React.createRef();
@@ -558,6 +562,9 @@ class PostMap extends Component {
         else if (this.state.loading) {
             return (
                 <div className={classes.loading}>
+                    <div className={classes.warningInfo}>
+                        {Parser(require('./readme.json').info)}
+                    </div>
                     <ReactLoading type={'cubes'} color={'#ffffff'} height={'90vw'} width={'90vw'} />
                 </div>
             );

@@ -43,12 +43,6 @@ PostOffice.find({}, (err, data) => {
     else if (!data) {
         console.log("[ERROR] EMPTY DATA!");
     } else {
-        console.log(data.length)
-        for (var i = 0; i < data.length; ++i) {
-            data[i].total = -1;
-            data[i].nowCalling = -1;
-            data[i].nowWaiting = -1;
-        }
-        fs.writeFile(file_path, JSON.stringify(data), 'utf8', () => console.log(`successfully dump offer to ${file_path}`))
+        console.log(data)
     }
-})
+});
