@@ -19,6 +19,7 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 import Divider from '@material-ui/core/Divider';
@@ -28,7 +29,7 @@ import postOffcieImage from "../assets/post-office-icon.png";
 import 'react-notifications/lib/notifications.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import Modal from '@material-ui/core/Modal';
-
+import CancelIcon from '@material-ui/icons/Cancel';
 // Liff
 const liff = window.liff;
 
@@ -69,9 +70,9 @@ const useStyles = (theme) => ({
     },
     carouselCard: {
         // margin: "5%",
-        // marginLeft: "2%",
-        // marginRight: "2%",
-        width: "100%",
+        marginLeft: "2%",
+        marginRight: "2%",
+        width: "96%",
         height: "10rem",
         overflow: "scroll",
     },
@@ -117,8 +118,32 @@ const useStyles = (theme) => ({
     },
     Divider: {
         margin: "1rem",
-    }
-
+    },
+    modalTextFieldHolder: {
+        width: "90vw",
+        height: "auto",
+        backgroundColor: "#fff",
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+    },
+    Setting: {
+        textAlign: "center",
+        maxWidth: "100%",
+        fontSize: "5vw",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        height: "18vw",
+        padding: "5px",
+    },
+    SettingText: {
+        textAlign: "center",
+        width: "60%",
+        fontSize: "14vw",
+        overflow: "scroll",
+    },
 });
 
 
@@ -247,7 +272,7 @@ class PostMap extends Component {
                         return res.json()
                     }
                     else {
-                        this.createNotification("error", "無法載入資料", "請確認網路連線狀況");
+                        // this.createNotification("error", "無法載入資料", "請確認網路連線狀況");
                         return null;
                     }
                 }
@@ -271,7 +296,6 @@ class PostMap extends Component {
                             prePostData[id].s_waitingUpdateTime = s_waitingDate;
                             prePostData[id].postDataUpdateTime = dataDate;
                             prePostData[id].total = postData[i].total;
-                            // prePostData[id].p_nowCalling = postData[i].p_nowCalling;
                             prePostData[id].number_plate_now = postData[i].number_plate_now;
                             prePostData[id].number_plate_total = postData[i].number_plate_total;
                         }
@@ -385,6 +409,8 @@ class PostMap extends Component {
             const markers = this.state.allMarkers.map(
                 (m, i) => map.getBounds().contains(m.position) ? { index: m.id, position: m.position } : undefined).filter(x => x);
 
+            if (markers.length === 0) return
+
             var newCenter = this.state.userLocation;
             const findCenterMarkId = markers.findIndex(m => m.index === this.state.focusedMark);
 
@@ -417,7 +443,7 @@ class PostMap extends Component {
 
     handleMarkerClick = (id) => {
         if (id === this.state.focusedMark) {
-
+            this.setState({ modalOpen: true })
         } else {
             this.setState({ focusedMark: id });
             const newfocusedMark = this.state.markers.find(m => m.index === id)
@@ -443,6 +469,14 @@ class PostMap extends Component {
         map.flyTo(this.state.userLocation, 15);
     }
 
+    handleCloseModal = (e) => {
+        e.preventDefault();
+        this.setState({ modalOpen: false });
+    }
+    handleCarouselClick = (e) => {
+        e.preventDefault();
+        this.setState({ modalOpen: true });
+    }
     render() {
         const { classes } = this.props;
 
@@ -470,7 +504,7 @@ class PostMap extends Component {
         const carouselCards = this.state.markers.map((i, id) => {
             const memo = this.state.postData[i.index].busiMemo ? Parser("備註: " + this.state.postData[i.index].busiMemo) : undefined;
             return (
-                <Card className={classes.carouselCard} key={`${id}`}>
+                <Card className={classes.carouselCard} key={`${id}`} onClick={this.handleCarouselClick}>
                     <CardHeader
                         avatar={
                             <Avatar aria-label="中華郵政" className={classes.avatar} src={postOffcieImage}>
@@ -491,33 +525,19 @@ class PostMap extends Component {
                         <Typography variant="body2" className={classes.mainInfoTypographyHolder}>
                             <div className={classes.mainInfoHolder}>
                                 <img aria-label="三倍券存量" style={{ width: 15, height: 15 }} src={k} />
-                                {` 三倍券存量: ${this.state.postData[i.index].total === -1 ? ` 無資料` : this.state.postData[i.index].total}`}
-                                <Typography style={{ fontSize: "0.8rem" }} className={classes.mainInfoTypography}>
-                                    {this.state.postData[i.index].total === -1 ? `` :
-                                        `(${this.state.postData[i.index].postDataUpdateTime.getMonth() + 1}/${this.state.postData[i.index].postDataUpdateTime.getDate()} 
-                                ${this.state.postData[i.index].postDataUpdateTime.getHours()}:${this.state.postData[i.index].postDataUpdateTime.getMinutes()} 更新)`}
-                                </Typography>
+                                {` 三倍券存量:`} <br />
+                                {` ${this.state.postData[i.index].total === undefined ? `無資料` : this.state.postData[i.index].total}`}
                             </div>
 
                             <div className={classes.mainInfoHolder}>
                                 <img aria-label="現在叫號" style={{ width: 15, height: 15 }} src={p} />
-                                {`現在叫號: ${this.state.postData[i.index].number_plate_now === -1 ? ` 無資料` : this.state.postData[i.index].number_plate_now}`}
-                                <Typography style={{ fontSize: "0.8rem" }} className={classes.mainInfoTypography}>
-                                    {this.state.postData[i.index].number_plate_now === -1 ? `` :
-                                        `(${this.state.postData[i.index].s_waitingUpdateTime.getMonth() + 1}/${this.state.postData[i.index].s_waitingUpdateTime.getDate()} 
-                                    ${pad(this.state.postData[i.index].s_waitingUpdateTime.getHours(), 2)}:${pad(this.state.postData[i.index].s_waitingUpdateTime.getMinutes(), 2)} 更新)`
-                                    }
-                                </Typography>
+                                {`現在叫號:`} <br />
+                                {` ${this.state.postData[i.index].number_plate_now === undefined ? ` 無資料` : this.state.postData[i.index].number_plate_now}`}
                             </div>
                             <div className={classes.mainInfoHolder}>
                                 <img aria-label="發放號碼" style={{ width: 15, height: 15 }} src={p} />
-                                {`  發放號碼: ${this.state.postData[i.index].number_plate_total === -1 ? ` 無資料` : this.state.postData[i.index].number_plate_total}`}
-                                <Typography style={{ fontSize: "0.8rem" }} className={classes.mainInfoTypography}>
-                                    {this.state.postData[i.index].number_plate_total === -1 ? `` :
-                                        `(${this.state.postData[i.index].p_waitingUpdateTime.getMonth() + 1}/${this.state.postData[i.index].p_waitingUpdateTime.getDate()} 
-                                    ${pad(this.state.postData[i.index].p_waitingUpdateTime.getHours(), 0)}:${pad(this.state.postData[i.index].p_waitingUpdateTime.getMinutes(), 2)} 更新)`
-                                    }
-                                </Typography>
+                                {`  發放號碼:`} <br />
+                                {`${this.state.postData[i.index].number_plate_total === undefined ? ` 無資料` : this.state.postData[i.index].number_plate_total}`}
                             </div>
                         </Typography>
 
@@ -525,23 +545,7 @@ class PostMap extends Component {
                             {memo}
                         </Typography>
 
-                        <Divider variant="middle" className={classes.Divider} />
 
-                        <Typography variant="body2" color="textSecondary" component="p">
-                            {`地址: ${this.state.postData[i.index].addr}`}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                            {`聯絡電話: ${this.state.postData[i.index].tel}   郵遞區號: ${this.state.postData[i.index].zipCd} `}
-                        </Typography>
-
-                        {/* <Divider variant="middle" className={classes.Divider} /> */}
-
-                        <Typography variant="body2" color="textSecondary" component="p">
-                            {`資料來源 : `}
-                            <a href="https://www.moeasmea.gov.tw/masterpage-tw">經濟部中小企業處</a>
-                            {` `}
-                            <a href="https://www.post.gov.tw/post/internet/index.jsp">中華郵政</a>
-                        </Typography>
                     </CardContent>
                 </Card >
             )
@@ -558,6 +562,75 @@ class PostMap extends Component {
             );
         }
         else {
+            const memo = !this.state.focusedMark ? null : this.state.postData[this.state.focusedMark].busiMemo ? Parser("備註資訊: " + this.state.postData[this.state.focusedMark].busiMemo) : null;
+            const modal = this.state.focusedMark ? (
+                <Card className={classes.modalTextFieldHolder}>
+                    <CardHeader
+                        avatar={
+                            <Avatar aria-label="中華郵政" className={classes.avatar} src={postOffcieImage}>
+                                郵
+                            </Avatar>
+                        }
+                        action={
+                            <IconButton aria-label="settings" onClick={this.handleCloseModal}>
+                                <CancelIcon />
+                            </IconButton>
+                        }
+                        title={this.state.postData[this.state.focusedMark].storeNm}
+                        subheader={Parser(this.state.postData[this.state.focusedMark].busiTime)}
+                    />
+                    <CardContent>
+                        <div className={classes.Setting}>
+                            三倍券<br />存量
+                                <div className={classes.SettingText}>
+                                {` ${this.state.postData[this.state.focusedMark].total === undefined ? `無資料` : this.state.postData[this.state.focusedMark].total}`}
+                            </div>
+                        </div >
+
+                        <div className={classes.Setting}>
+                            {`現  在`}<br />{`叫  號`}
+                            <div className={classes.SettingText}>
+                                {` ${this.state.postData[this.state.focusedMark].number_plate_now === undefined ? `無資料` : this.state.postData[this.state.focusedMark].number_plate_now}`}
+                            </div>
+                        </div >
+                        <div className={classes.Setting}>
+                            已發放<br />號碼
+                                <div className={classes.SettingText}>
+                                {` ${this.state.postData[this.state.focusedMark].number_plate_total === undefined ? `無資料` : this.state.postData[this.state.focusedMark].number_plate_total}`}
+                            </div>
+                        </div >
+                        <Typography variant="body2" className={classes.mainInfoTypography}>
+                            {this.state.postData[this.state.focusedMark].number_plate_now === -1 ? `` :
+                                `(${this.state.postData[this.state.focusedMark].s_waitingUpdateTime.getMonth() + 1}/${this.state.postData[this.state.focusedMark].s_waitingUpdateTime.getDate()} 
+                                    ${pad(this.state.postData[this.state.focusedMark].s_waitingUpdateTime.getHours(), 2)}:${pad(this.state.postData[this.state.focusedMark].s_waitingUpdateTime.getMinutes(), 2)} 更新)`
+                            }
+                        </Typography>
+                        <Divider variant="middle" className={classes.Divider} />
+
+                        <Typography variant="body2" color="textSecondary" component="p">
+                            {memo}
+                        </Typography>
+
+                        <Typography variant="body2" color="textSecondary" component="p">
+                            {`地址: ${this.state.postData[this.state.focusedMark].addr}`}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                            {`聯絡電話: ${this.state.postData[this.state.focusedMark].tel}`}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                            {`郵遞區號: ${this.state.postData[this.state.focusedMark].zipCd}`}
+                        </Typography>
+
+                        {/* <Divider variant="middle" className={classes.Divider} /> */}
+
+                        <Typography variant="body2" color="textSecondary" component="p">
+                            {`資料來源 : `}
+                            <a href="https://www.moeasmea.gov.tw/masterpage-tw">經濟部中小企業處</a>
+                            {` `}
+                            <a href="https://www.post.gov.tw/post/internet/index.jsp">中華郵政</a>
+                        </Typography>
+                    </CardContent>
+                </Card>) : null;
             return (
                 <>
                     <Map
@@ -609,7 +682,17 @@ class PostMap extends Component {
                             {carouselCards}
                         </Carousel>;
                     </div>
+                    <Modal
+                        open={this.state.modalOpen}
+                        onClose={this.handleCloseModal}
+                        aria-labelledby="simple-modal-title"
+                        aria-describedby="simple-modal-description"
+                    >
+
+                        {modal}
+                    </Modal>
                     <NotificationContainer />
+
                 </>
             )
         }
