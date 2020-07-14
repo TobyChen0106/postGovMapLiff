@@ -145,7 +145,7 @@ const useStyles = (theme) => ({
         fontSize: "14vw",
         overflow: "scroll",
     },
-    warningInfo:{
+    warningInfo: {
         padding: "10vw",
         color: "#fff"
     }
@@ -216,6 +216,8 @@ class PostMap extends Component {
                 var s_waitingDate = new Date(postData[i].number_plate_updateTime);
                 var p_waitingDate = new Date(postData[i].number_plate_updateTime);
                 var dataDate = new Date(postData[i].postDataUpdateTime);
+                dataDate.setHours(dataDate.getHours() - 8);
+                dataDate = dataDate > p_waitingDate ? dataDate : p_waitingDate;
                 // s_waitingDate.setHours(s_waitingDate.getHours() - 8);
                 // p_waitingDate.setHours(p_waitingDate.getHours() - 8);
                 // dataDate.setHours(dataDate.getHours() - 8);
@@ -293,6 +295,8 @@ class PostMap extends Component {
                         // s_waitingDate.setHours(s_waitingDate.getHours() - 8);
 
                         var dataDate = new Date(postData[i].postDataUpdateTime);
+                        dataDate.setHours(dataDate.getHours() - 8);
+                        dataDate = dataDate > p_waitingDate ? dataDate : p_waitingDate;
                         // dataDate.setHours(dataDate.getHours() - 8);
 
                         const id = prePostData.findIndex(p => p.storeCd === postData[i].storeCd)
@@ -609,10 +613,16 @@ class PostMap extends Component {
                         </div >
                         <Typography variant="body2" className={classes.mainInfoTypography}>
                             {this.state.postData[this.state.focusedMark].number_plate_now === -1 ? `` :
+                                `(${this.state.postData[this.state.focusedMark].postDataUpdateTime.getMonth() + 1}/${this.state.postData[this.state.focusedMark].postDataUpdateTime.getDate()} 
+                                    ${pad(this.state.postData[this.state.focusedMark].postDataUpdateTime.getHours(), 2)}:${pad(this.state.postData[this.state.focusedMark].postDataUpdateTime.getMinutes(), 2)} 更新)`
+                            }
+                        </Typography>
+                        {/* <Typography variant="body2" className={classes.mainInfoTypography}>
+                            {this.state.postData[this.state.focusedMark].number_plate_now === -1 ? `` :
                                 `(${this.state.postData[this.state.focusedMark].s_waitingUpdateTime.getMonth() + 1}/${this.state.postData[this.state.focusedMark].s_waitingUpdateTime.getDate()} 
                                     ${pad(this.state.postData[this.state.focusedMark].s_waitingUpdateTime.getHours(), 2)}:${pad(this.state.postData[this.state.focusedMark].s_waitingUpdateTime.getMinutes(), 2)} 更新)`
                             }
-                        </Typography>
+                        </Typography> */}
                         <Divider variant="middle" className={classes.Divider} />
 
                         <Typography variant="body2" color="textSecondary" component="p">
