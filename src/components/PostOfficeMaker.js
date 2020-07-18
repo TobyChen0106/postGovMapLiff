@@ -108,9 +108,7 @@ const PostOfficeMaker = (total, s_people, p_people, color = "#0058a3") => {
                     <div className="left" style="${markerDotLeftStyles}"/>
                     <div className="right" style="${markerDotRightStyles}"/>
                 </span>
-                <div style="${mytotalHolder}">
-                    <img style="${kImage}" src="${k}"/> ${total ? total : 0}
-                </div>
+                
                 <div style="${mypeopleHolder}">
                     <img style="${kImage}" src="${p}"/> 
                     ${s_people ? s_people === -1 ? `x` : s_people : 0}/${p_people ? p_people === -1 ? `x` : p_people : 0}
@@ -120,5 +118,7 @@ const PostOfficeMaker = (total, s_people, p_people, color = "#0058a3") => {
         })
     )
 }
-
+{/* <div style="${mytotalHolder}">
+    <img style="${kImage}" src="${k}" /> ${total ? total : 0}
+</div> */}
 export default PostOfficeMaker;
